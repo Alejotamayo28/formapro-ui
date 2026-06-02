@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FormaPro Academy — Tester Webhook n8n</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --blue: #38bdf8;
+      --border: #374151;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #111827 55%, #020617 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 60px; }
+    h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 44px); }
+    h2 { margin: 0 0 14px; font-size: 20px; }
+    p { color: var(--muted); }
+    .hero { margin-bottom: 22px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border: 1px solid var(--border);
+      border-radius: 999px; color: #bfdbfe; background: rgba(56, 189, 248, .08);
+      font-size: 13px; margin-bottom: 14px;
+    }
+    .grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: rgba(17, 24, 39, .9);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+    }
+    label { display: block; color: #cbd5e1; font-weight: 650; margin: 12px 0 6px; }
+    input, textarea, select {
+      width: 100%; border: 1px solid var(--border); border-radius: 12px;
+      background: #030712; color: var(--text); padding: 11px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      outline: none;
+    }
+    textarea { min-height: 245px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(56, 189, 248, .15); }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .payload-toolbar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 8px; margin: 8px 0 10px;
+    }
+    .payload-toolbar .nav { display: flex; flex-wrap: wrap; gap: 8px; }
+    button {
+      border: 0; border-radius: 12px; padding: 10px 13px; cursor: pointer;
+      color: #07111f; background: var(--blue); font-weight: 750;
+    }
+    button.secondary { background: #cbd5e1; }
+    button.good { background: var(--green); }
+    button.warn { background: var(--yellow); }
+    button.danger { background: var(--red); color: #fff; }
+    button.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    button.mini { padding: 7px 10px; font-size: 12px; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .small { font-size: 13px; color: var(--muted); }
+    .log {
+      min-height: 280px; max-height: 560px; overflow: auto;
+      background: #020617; border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px; white-space: pre-wrap;
+    }
+    .ok { color: #86efac; }
+    .bad { color: #fca5a5; }
+    .info { color: #93c5fd; }
+    .warn-text { color: #fcd34d; }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; font-size: 14px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; }
+    th { color: #bfdbfe; background: rgba(56, 189, 248, .08); }
+    td { color: #d1d5db; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    pre {
+      background: #020617; border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px; overflow: auto; color: #d1d5db;
+    }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 650px) { .two { grid-template-columns: 1fr; } }
+    .pill { display:inline-block; padding: 2px 8px; border-radius:999px; background: var(--panel-2); color:#cbd5e1; font-size:12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="badge">🧪 Tester local — FormaPro Academy</div>
+      <h1>Webhook Tester para n8n + Supabase — asistido por IA</h1>
+      <p>
+        UI sencilla para enviar los pagos del reto, duplicados rápidos y casos inválidos.
+        Después valida la tabla en Supabase con el resultado esperado.
+      </p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>1. Configuración y envío</h2>
+        <label for="webhookUrl">Webhook URL</label>
+        <input id="webhookUrl" value="https://alejotamayo28.app.n8n.cloud/webhook/formapro-payment" />
+        <p class="small">
+          Si el navegador bloquea por CORS, usa el botón “Copiar curl”. El workflow igual puede funcionar aunque el navegador no pueda leer la respuesta.
+        </p>
+
+        <div class="two">
+          <div>
+            <label for="preset">Payload rápido</label>
+            <select id="preset"></select>
+          </div>
+          <div>
+            <label for="duplicateCount">Duplicados rápidos</label>
+            <input id="duplicateCount" type="number" min="2" max="50" value="10" />
+          </div>
+        </div>
+
+        <label for="payload">Payload JSON</label>
+        <div class="payload-toolbar">
+          <span class="small" id="payloadStatus">Payload editable. Aún no hay historial de envíos.</span>
+          <div class="nav">
+            <button class="ghost mini" id="payloadPrev" type="button">← Payload anterior</button>
+            <button class="ghost mini" id="payloadNext" type="button">Payload siguiente →</button>
+          </div>
+        </div>
+        <textarea id="payload"></textarea>
+
+        <div class="buttons">
+          <button class="good" id="sendOne">Enviar payload actual</button>
+          <button id="sendOfficial">Enviar 9 pagos oficiales</button>
+          <button class="warn" id="sendDuplicates">Duplicados PAY-001</button>
+          <button class="danger" id="sendInvalids">Enviar inválidos</button>
+          <button class="secondary" id="copyCurl">Copiar curl</button>
+          <button class="ghost" id="resetPayload">Reiniciar Payload</button>
+          <button class="ghost" id="clearLog">Limpiar log</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2. Log de respuestas</h2>
+        <div id="log" class="log"><span class="info">Listo. Selecciona una prueba y envía.</span></div>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:18px;">
+      <div class="card">
+        <h2>3. Resultado esperado en Supabase</h2>
+        <table>
+          <thead>
+            <tr><th>id_pago</th><th>email</th><th>moneda</th><th>estado</th><th>Nota</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>PAY-001</td><td>ana@gmail.com</td><td>cop</td><td>completed</td><td>Duplicado controlado</td></tr>
+            <tr><td>PAY-003</td><td>marta@gmail.com</td><td>cop</td><td>refunded</td><td>Reembolso marcado</td></tr>
+            <tr><td>PAY-004</td><td></td><td>cop</td><td>completed</td><td>Sin email, no bienvenida</td></tr>
+            <tr><td>PAY-005</td><td>ANA.Lopez@gmail.com</td><td>cop</td><td>completed</td><td>Dominio email normalizado</td></tr>
+            <tr><td>PAY-006</td><td>diego@gmail.com</td><td>cop</td><td>completed</td><td>Importe texto a número</td></tr>
+            <tr><td>PAY-007</td><td>juan@gmail.com</td><td>cop</td><td>completed</td><td>Pago válido</td></tr>
+          </tbody>
+        </table>
+        <p class="small">
+          No deben aparecer: <span class="pill">PAY-002</span> <span class="pill">PAY-BAD-CURRENCY</span>
+          <span class="pill">PAY-BAD-AMOUNT</span> <span class="pill">PAY-008;DROP</span> <span class="pill">PAY-BAD-DATE</span>
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>4. SQL de verificación</h2>
+        <pre>select id_pago, email, nombre, curso, importe, moneda, estado, fecha, refunded_at
+from operations.payments
+order by id_pago;
+
+select count(*) as total_rows
+from operations.payments;
+
+select id_pago
+from operations.payments
+where id_pago in (
+  'PAY-002',
+  'PAY-BAD-CURRENCY',
+  'PAY-BAD-AMOUNT',
+  'PAY-008;DROP',
+  'PAY-BAD-DATE'
+);</pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const officialPayments = [
+      {"id_pago":"PAY-001","email":"ana@gmail.com","nombre":"Ana Ruiz","curso":"Excel Avanzado","importe":120000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T10:00:00Z"},
+      {"id_pago":"PAY-002","email":"luis@gmail.com","nombre":"Luis Gomez","curso":"Python","importe":45,"moneda":"USD","estado":"failed","fecha":"2026-05-20T11:00:00Z"},
+      {"id_pago":"PAY-003","email":"marta@gmail.com","nombre":"Marta Diaz","curso":"Marketing Digital","importe":80000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T12:00:00Z"},
+      {"id_pago":"PAY-001","email":"ana@gmail.com","nombre":"Ana Ruiz","curso":"Excel Avanzado","importe":120000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T10:00:05Z"},
+      {"id_pago":"PAY-004","email":"","nombre":"Carlos Perez","curso":"SQL","importe":60000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T13:00:00Z"},
+      {"id_pago":"PAY-005","email":"  ANA.Lopez@GMAIL.com ","nombre":"Ana Lopez","curso":"Power BI","importe":90000,"moneda":"cop","estado":"completed","fecha":"2026-05-20T14:00:00Z"},
+      {"id_pago":"PAY-006","email":"diego@gmail.com","nombre":"Diego Mora","curso":"Java","importe":"75000","moneda":"COP","estado":"completed","fecha":"2026-05-20T15:00:00Z"},
+      {"id_pago":"PAY-003","email":"marta@gmail.com","nombre":"Marta Diaz","curso":"Marketing Digital","importe":80000,"moneda":"COP","estado":"refunded","fecha":"2026-05-20T16:00:00Z"},
+      {"id_pago":"PAY-007","email":"juan@gmail.com","nombre":"Juan Rios","curso":"Excel Avanzado","importe":120000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T17:00:00Z"}
+    ];
+
+    const invalidPayments = [
+      {"id_pago":"PAY-BAD-CURRENCY","email":"badcurrency@gmail.com","nombre":"Bad Currency","curso":"Test","importe":10,"moneda":"EUR","estado":"completed","fecha":"2026-05-20T18:00:00Z"},
+      {"id_pago":"PAY-BAD-AMOUNT","email":"badamount@gmail.com","nombre":"Bad Amount","curso":"Test","importe":"abc","moneda":"COP","estado":"completed","fecha":"2026-05-20T18:01:00Z"},
+      {"id_pago":"PAY-008;DROP","email":"badid@gmail.com","nombre":"Bad Id","curso":"Test","importe":10,"moneda":"COP","estado":"completed","fecha":"2026-05-20T18:02:00Z"},
+      {"id_pago":"PAY-BAD-DATE","email":"baddate@gmail.com","nombre":"Bad Date","curso":"Test","importe":10,"moneda":"USD","estado":"completed","fecha":"not-a-date"}
+    ];
+
+    const presets = [
+      ...officialPayments.map((payment, index) => ({ label: `${index + 1}. ${payment.id_pago} — ${payment.estado}`, value: payment })),
+      ...invalidPayments.map((payment) => ({ label: `Inválido — ${payment.id_pago}`, value: payment }))
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const logBox = $('log');
+    let payloadHistory = [];
+    let payloadHistoryIndex = -1;
+
+    function clonePayload(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function updatePayloadStatus(text) {
+      $('payloadStatus').textContent = text;
+    }
+
+    function setPayload(value, statusText = 'Payload editable. Aún no hay historial de envíos.') {
+      const payloadBox = $('payload');
+      payloadBox.value = JSON.stringify(value, null, 2);
+      payloadBox.scrollTop = 0;
+      updatePayloadStatus(statusText);
+    }
+
+    function showPayloadHistoryAt(index) {
+      if (!payloadHistory.length) return;
+      payloadHistoryIndex = Math.max(0, Math.min(index, payloadHistory.length - 1));
+      const entry = payloadHistory[payloadHistoryIndex];
+      setPayload(
+        entry.payload,
+        `Historial de payloads enviados: ${payloadHistoryIndex + 1} de ${payloadHistory.length} — ${entry.label}`
+      );
+    }
+
+    function recordAndShowPayload(payload, label) {
+      payloadHistory.push({ label, payload: clonePayload(payload), sentAt: new Date().toISOString() });
+      showPayloadHistoryAt(payloadHistory.length - 1);
+    }
+
+    function resetPayload() {
+      payloadHistory = [];
+      payloadHistoryIndex = -1;
+      $('preset').value = '0';
+      setPayload(presets[0].value);
+      log('Payload reiniciado al default PAY-001 completed. Historial limpiado.', 'info');
+    }
+
+    function navigatePayloadHistory(direction) {
+      if (!payloadHistory.length) {
+        log('No hay historial de payloads enviados todavía.', 'warn-text');
+        return;
+      }
+      showPayloadHistoryAt(payloadHistoryIndex + direction);
+    }
+
+    function log(message, cls = '') {
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.className = cls;
+      line.textContent = `[${time}] ${message}`;
+      if (logBox.textContent.includes('Listo. Selecciona')) logBox.textContent = '';
+      logBox.appendChild(line);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    async function sendPayload(payload, label = payload.id_pago || 'payload') {
+      const url = $('webhookUrl').value.trim();
+      const start = performance.now();
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const text = await response.text();
+        const ms = Math.round(performance.now() - start);
+        const ok = response.ok && text.trim() === '{"ok":true}';
+        log(`${label} → HTTP ${response.status} → ${text} → ${ms}ms`, ok ? 'ok' : 'warn-text');
+        return { ok, status: response.status, text, ms };
+      } catch (error) {
+        log(`${label} → ERROR: ${error.message}. Posible CORS; prueba con curl.`, 'bad');
+        return { ok: false, error };
+      }
+    }
+
+    function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+
+    async function sendOfficial() {
+      log('Iniciando envío de 9 pagos oficiales...', 'info');
+      for (const payment of officialPayments) {
+        recordAndShowPayload(payment, `${payment.id_pago} ${payment.estado}`);
+        await sleep(300);
+        await sendPayload(payment, `${payment.id_pago} ${payment.estado}`);
+      }
+      log(`Finalizado. Hay ${payloadHistory.length} payload(s) en el historial. Revisa Supabase: deben quedar 6 filas.`, 'info');
+    }
+
+    async function sendDuplicates() {
+      const count = Number($('duplicateCount').value || 10);
+      const duplicate = officialPayments[3];
+      recordAndShowPayload(duplicate, `PAY-001 duplicado base x${count}`);
+      log(`Enviando ${count} duplicados concurrentes de PAY-001. El payload base quedó guardado en el historial...`, 'info');
+      const jobs = Array.from({ length: count }, (_, i) => sendPayload(duplicate, `PAY-001 dup ${i + 1}`));
+      await Promise.all(jobs);
+      log('Duplicados finalizados. PAY-001 debe quedar una sola vez en Supabase.', 'info');
+    }
+
+    async function sendInvalids() {
+      log('Enviando casos inválidos. Cada payload quedará guardado en el historial...', 'info');
+      for (const payment of invalidPayments) {
+        recordAndShowPayload(payment, payment.id_pago);
+        await sleep(300);
+        await sendPayload(payment, payment.id_pago);
+      }
+      log(`Inválidos finalizados. Hay ${payloadHistory.length} payload(s) en el historial. Verifica que no aparezcan en Supabase.`, 'info');
+    }
+
+    async function copyCurl() {
+      const url = $('webhookUrl').value.trim();
+      let payload;
+      try { payload = JSON.parse($('payload').value); }
+      catch { log('Payload inválido, no puedo generar curl.', 'bad'); return; }
+      const cmd = `curl -sS -X POST '${url}' \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify(payload).replaceAll("'", "'\\''")}'`;
+      await navigator.clipboard.writeText(cmd);
+      log('curl copiado al portapapeles.', 'ok');
+    }
+
+    function init() {
+      const select = $('preset');
+      presets.forEach((preset, index) => {
+        const option = document.createElement('option');
+        option.value = String(index);
+        option.textContent = preset.label;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', () => setPayload(presets[Number(select.value)].value));
+      setPayload(presets[0].value);
+
+      $('sendOne').addEventListener('click', async () => {
+        try {
+          const payload = JSON.parse($('payload').value);
+          recordAndShowPayload(payload, `${payload.id_pago || 'payload'} manual`);
+          await sendPayload(payload);
+        }
+        catch { log('Payload JSON inválido.', 'bad'); }
+      });
+      $('sendOfficial').addEventListener('click', sendOfficial);
+      $('sendDuplicates').addEventListener('click', sendDuplicates);
+      $('sendInvalids').addEventListener('click', sendInvalids);
+      $('copyCurl').addEventListener('click', copyCurl);
+      $('resetPayload').addEventListener('click', resetPayload);
+      $('payloadPrev').addEventListener('click', () => navigatePayloadHistory(-1));
+      $('payloadNext').addEventListener('click', () => navigatePayloadHistory(1));
+      $('clearLog').addEventListener('click', () => { logBox.textContent = ''; log('Log limpiado.', 'info'); });
+    }
+
+    init();
+  </script>
+</body>
+</html>
