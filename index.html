@@ -164,15 +164,15 @@
           <tbody>
             <tr><td>PAY-001</td><td>ana@gmail.com</td><td>cop</td><td>completed</td><td>Duplicado controlado</td></tr>
             <tr><td>PAY-003</td><td>marta@gmail.com</td><td>cop</td><td>refunded</td><td>Reembolso marcado</td></tr>
-            <tr><td>PAY-004</td><td></td><td>cop</td><td>completed</td><td>Sin email, no bienvenida</td></tr>
             <tr><td>PAY-005</td><td>ANA.Lopez@gmail.com</td><td>cop</td><td>completed</td><td>Dominio email normalizado</td></tr>
             <tr><td>PAY-006</td><td>diego@gmail.com</td><td>cop</td><td>completed</td><td>Importe texto a número</td></tr>
             <tr><td>PAY-007</td><td>juan@gmail.com</td><td>cop</td><td>completed</td><td>Pago válido</td></tr>
           </tbody>
         </table>
         <p class="small">
-          No deben aparecer: <span class="pill">PAY-002</span> <span class="pill">PAY-BAD-CURRENCY</span>
+          No deben aparecer: <span class="pill">PAY-002</span> <span class="pill">PAY-004</span> <span class="pill">PAY-BAD-CURRENCY</span>
           <span class="pill">PAY-BAD-AMOUNT</span> <span class="pill">PAY-008;DROP</span> <span class="pill">PAY-BAD-DATE</span>
+          <span class="pill">PAY-EMAIL-MISSING</span> <span class="pill">PAY-EMAIL-INVALID</span>
         </p>
       </div>
 
@@ -189,10 +189,13 @@ select id_pago
 from operations.payments
 where id_pago in (
   'PAY-002',
+  'PAY-004',
   'PAY-BAD-CURRENCY',
   'PAY-BAD-AMOUNT',
   'PAY-008;DROP',
-  'PAY-BAD-DATE'
+  'PAY-BAD-DATE',
+  'PAY-EMAIL-MISSING',
+  'PAY-EMAIL-INVALID'
 );</pre>
       </div>
     </section>
@@ -215,7 +218,9 @@ where id_pago in (
       {"id_pago":"PAY-BAD-CURRENCY","email":"badcurrency@gmail.com","nombre":"Bad Currency","curso":"Test","importe":10,"moneda":"EUR","estado":"completed","fecha":"2026-05-20T18:00:00Z"},
       {"id_pago":"PAY-BAD-AMOUNT","email":"badamount@gmail.com","nombre":"Bad Amount","curso":"Test","importe":"abc","moneda":"COP","estado":"completed","fecha":"2026-05-20T18:01:00Z"},
       {"id_pago":"PAY-008;DROP","email":"badid@gmail.com","nombre":"Bad Id","curso":"Test","importe":10,"moneda":"COP","estado":"completed","fecha":"2026-05-20T18:02:00Z"},
-      {"id_pago":"PAY-BAD-DATE","email":"baddate@gmail.com","nombre":"Bad Date","curso":"Test","importe":10,"moneda":"USD","estado":"completed","fecha":"not-a-date"}
+      {"id_pago":"PAY-BAD-DATE","email":"baddate@gmail.com","nombre":"Bad Date","curso":"Test","importe":10,"moneda":"USD","estado":"completed","fecha":"not-a-date"},
+      {"id_pago":"PAY-EMAIL-MISSING","nombre":"Carlos Perez","curso":"SQL","importe":60000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T13:00:00Z"},
+      {"id_pago":"PAY-EMAIL-INVALID","email":"correo-invalido","nombre":"Carlos Perez","curso":"SQL","importe":60000,"moneda":"COP","estado":"completed","fecha":"2026-05-20T13:00:00Z"}
     ];
 
     const presets = [
@@ -313,7 +318,7 @@ where id_pago in (
         await sleep(300);
         await sendPayload(payment, `${payment.id_pago} ${payment.estado}`);
       }
-      log(`Finalizado. Hay ${payloadHistory.length} payload(s) en el historial. Revisa Supabase: deben quedar 6 filas.`, 'info');
+      log(`Finalizado. Hay ${payloadHistory.length} payload(s) en el historial. Revisa Supabase: deben quedar 5 filas.`, 'info');
     }
 
     async function sendDuplicates() {
