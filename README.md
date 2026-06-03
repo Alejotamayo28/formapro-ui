@@ -81,18 +81,18 @@ Accept-Profile: ={{$vars.SUPABASE_SCHEMA}}
 create schema if not exists operations;
 
 create table if not exists operations.payments (
-  id_pago text not null,
-  email text not null,
-  nombre text,
-  curso text not null,
-  importe numeric not null,
-  moneda text not null,
-  estado text not null,
-  fecha timestamptz not null,
+  id_pago TEXT NOT NULL,
+  email TEXT,
+  nombre TEXT NOT NULL,
+  curso TEXT NOT NULL,
+  importe NUMERIC NOT NULL,
+  moneda TEXT NOT NULL,
+  estado TEXT NOT NULL,
+  fecha timestamptz NOT NULL,
   refunded_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  constraint payments_pk primary key (id_pago)
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  CONSTRAINT payments_pk PRIMARY KEY (id_pago)
 );
 
 grant usage on schema operations to service_role;
